@@ -1,8 +1,8 @@
-from typing import Callable, List
+from typing import Callable, List, Union
 
 ACCESSION_ID = str
 ACCESSION_IDS = List[ACCESSION_ID]
-ACCESSION = ACCESSION_ID | ACCESSION_IDS
+ACCESSION = Union[ACCESSION_ID, ACCESSION_IDS]
 UniProtRecord = dict
 
 UNIPROT_REQUEST_FIELDS = [
