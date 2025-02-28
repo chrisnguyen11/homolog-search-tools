@@ -2,10 +2,12 @@ import requests
 import json
 import sys
 from typing import List
-from .search_utils import ACCESSION, ACCESSION_ID, UniProtRecord, batch_request
+from .search_utils import ACCESSION, UNIPROT_REQUEST_FIELDS, ACCESSION_ID, UniProtRecord, batch_request
 
 class UniProtRequest:
     "Class to interact with the UniProt REST API."
+    fields = UNIPROT_REQUEST_FIELDS
+
     def __init__(self, email:str) -> None:
         """
         Initialize class to interact with the UniProt REST API.
@@ -34,15 +36,10 @@ class UniProtRequest:
         - : list of UniProtRecord.
         """
 
-        def uniprot_request_function(accession):
+        def uniprot_request_function(accession, fields):
             params = {
                 "accessions": ",".join(accession),
-                "fields": [
-                    "accession",
-                    "protein_name",
-                    "cc_function",
-                    "ft_binding"
-                ]
+                "fields": fields
             }
             headers = {
                 "accept": "application/json"
@@ -57,5 +54,9 @@ class UniProtRequest:
         
         if isinstance(accession, ACCESSION_ID):
             accession = [accession]
-        records = batch_request(uniprot_request_function, accession=accession, **kwarg)
+        records = batch_request(uniprot_request_function, accession=accession, **kwarg, fields=self.fields)
         return records
+    
+    def set_request_fields(self, fields:List) -> None:
+        "Overwrites default request fields. Used for testing."
+        self.fields = fields
