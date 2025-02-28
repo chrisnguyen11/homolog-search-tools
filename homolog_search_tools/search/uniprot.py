@@ -47,7 +47,7 @@ class UniProtRequest:
             headers = {
                 "accept": "application/json"
                 }
-            base_url = f"https://rest.uniprot.org/uniprotkb/accessions"
+            base_url = "https://rest.uniprot.org/uniprotkb/accessions"
 
             response = requests.get(base_url, headers=headers, params=params)
             if not response.ok:
