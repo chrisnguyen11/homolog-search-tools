@@ -2,7 +2,7 @@ import requests
 import json
 import sys
 from typing import List
-from .search_utils import ACCESSION, UniProtRecord, batch_request
+from .search_utils import ACCESSION, ACCESSION_ID, UniProtRecord, batch_request
 
 class UniProtRequest:
     "Class to interact with the UniProt REST API."
@@ -36,7 +36,7 @@ class UniProtRequest:
 
         def uniprot_request_function(accession):
             params = {
-                "accessions": "".join(accession),
+                "accessions": ",".join(accession),
                 "fields": [
                     "accession",
                     "protein_name",
@@ -47,13 +47,15 @@ class UniProtRequest:
             headers = {
                 "accept": "application/json"
                 }
-            base_url = "https://rest.uniprot.org/uniprotkb/accessions"
+            base_url = f"https://rest.uniprot.org/uniprotkb/accessions"
 
             response = requests.get(base_url, headers=headers, params=params)
             if not response.ok:
                 response.raise_for_status()
                 sys.exit()
-            return response.json()
-
-        records = batch_request(uniprot_request_function, accession=accession)
+            return response.json()['results']
+        
+        if isinstance(accession, ACCESSION_ID):
+            accession = [accession]
+        records = batch_request(uniprot_request_function, accession=accession, **kwarg)
         return records
