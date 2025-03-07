@@ -1,11 +1,17 @@
 import pandas as pd
 import numpy as np
 import os
-from typing import Union
+from typing import List, Tuple, Union
 
-FASTA = Union(os.PathLike, str)
+FASTA = Union[os.PathLike, str]
+SEQUNCE_DATA = Union[FASTA, pd.DataFrame]
 
-def handle_sequence_data(path_or_dataframe, temp_path, **kwarg):
+def handle_sequence_data(path_or_dataframe:SEQUNCE_DATA, temp_path:FASTA, 
+                         **kwarg
+                        ):
+    """
+    Function to handle amino acid sequence data formats - both fasta files or DataFrames containing sequence data.
+    """
     if isinstance(path_or_dataframe, FASTA):
         return path_or_dataframe
     elif isinstance(path_or_dataframe, pd.DataFrame):
@@ -14,12 +20,20 @@ def handle_sequence_data(path_or_dataframe, temp_path, **kwarg):
     else:
         raise Exception("Unrecognized data type, requires either path to fasta file or dataframe.")
 
-def write_fasta(df:pd,DataFrame, path_or_buf, header_col='Accession', sequence_col='Sequence'):
+def write_fasta(df:pd.DataFrame, path_or_buf:FASTA, 
+                header_col:str='Accession', sequence_col:str='Sequence'
+                ) -> None:
+    """
+    Writes fasta file from DataFrame.
+    """
     with open(path_or_buf, "w+") as fastafile:
         for _, row in df.iterrows():
             fastafile.write(f">{row[header_col]}\n{row[sequence_col]}\n")
 
-def read_fasta(path_or_buf):
+def read_fasta(path_or_buf:FASTA) -> Tuple[List[str], List[str]]:
+    """
+    Reads fasta file into two list: a headers list and a sequence list.
+    """
     headers, seqs = [], []
     with open(path_or_buf, "r") as fastafile:
         seq = []
