@@ -1,24 +1,26 @@
 import tempfile
 import os
+import pandas as pd
 from ..utils import handle_sequence_data
 from similarity_utils import cmd_run, read_tblastout
 
-class MMseqs:
-    path_to_binary = 'mmseqs'
+class MMseqs2:
+    def __init__(self, path_to_binary='mmseqs'):
+        self.path_to_binary = path_to_binary
 
-    def __init__(self, path_to_binary=''):
-        if path_to_binary:
-            self.path_to_binary = path_to_binary
-
-    def run(self, query_sequences, target_sequences) -> None:
+    def run(self, query_sequences, target_sequences) -> pd.DataFrame:
         """
-        Command wrapper for MMseqs2 all-vs-all pairwise alignment.
+        Command wrapper for MMseqs2 to cluster a database, or do an all-against-all pairwise alignment.
 
         Parameters
         ----------
+        - query_sequences: SEQUENCE_DATA
+        - target_sequences: SEQUENCE_DATA
+
         Returns
         -------
-        - 
+        - :pd.DataFrame: pairwise alignment.
+
         Reference
         ---------
         - https://mmseqs.com/latest/userguide.pdf
@@ -39,3 +41,9 @@ class MMseqs:
         df = read_tblastout(output_file)
         temp_dir.cleanup()
         return df
+    
+    def run_allvsall(self, sequences) -> pd.DataFrame:
+        """
+        Equivalent to MMseqs.run(query_sequences=sequences, target_sequences=sequences).
+        """
+        return self.run(sequences, sequences)
