@@ -1,5 +1,18 @@
 import pandas as pd
 import numpy as np
+import os
+from typing import Union
+
+FASTA = Union(os.PathLike, str)
+
+def handle_sequence_data(path_or_dataframe, temp_path, **kwarg):
+    if isinstance(path_or_dataframe, FASTA):
+        return path_or_dataframe
+    elif isinstance(path_or_dataframe, pd.DataFrame):
+        write_fasta(path_or_dataframe, temp_path, **kwarg)
+        return temp_path
+    else:
+        raise Exception("Unrecognized data type, requires either path to fasta file or dataframe.")
 
 def write_fasta(df:pd,DataFrame, path_or_buf, header_col='Accession', sequence_col='Sequence'):
     with open(path_or_buf, "w+") as fastafile:
