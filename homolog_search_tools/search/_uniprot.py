@@ -4,7 +4,7 @@ import sys
 from typing import List
 import requests
 import pandas as pd
-from .search_utils import Accession, AccessionId, UniProtRequestFields, UniProtRecord, batch_request
+from ._search_utils import Accession, AccessionId, UniProtRequestFields, UniProtRecord, batch_request
 
 class UniProtRequest:
     "Class to interact with the UniProt REST API."
