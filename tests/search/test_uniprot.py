@@ -1,7 +1,7 @@
 import pandas as pd
 
-from homolog_search_tools.search.uniprot import UniProtRequest, uniprotrecords_to_dataframe
-from homolog_search_tools.search.search_utils import UniProtRequestFields
+from homolog_search_tools.search._uniprot import UniProtRequest, uniprotrecords_to_dataframe
+from homolog_search_tools.search._search_utils import UniProtRequestFields
 
 def test_UniProtRequest_init():
     uniprot = UniProtRequest('example@email.com')

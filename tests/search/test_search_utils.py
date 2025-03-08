@@ -1,4 +1,4 @@
-from homolog_search_tools.search.search_utils import batch_request
+from homolog_search_tools.search._search_utils import batch_request
 
 def test_batch_request():
     def example_func(x):
