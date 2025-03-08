@@ -3,8 +3,22 @@
 import tempfile
 import os
 import pandas as pd
+<<<<<<< HEAD
+<<<<<<< HEAD:homolog_search_tools/similarity/_mmseqs2.py
+<<<<<<< HEAD:homolog_search_tools/similarity/_mmseqs2.py
 from ..utils._utils import cmd_run, handle_sequence_data
 from ._similarity_utils import read_tblastout
+=======
+from .utils.utils import cmd_run, handle_sequence_data
+=======
+from ..utils.utils import cmd_run, handle_sequence_data
+>>>>>>> 9ed310e (Fix import):homolog_search_tools/similarity/mmseqs2.py
+from .similarity_utils import read_tblastout
+>>>>>>> 6b4b546 (Fix import):homolog_search_tools/similarity/mmseqs2.py
+=======
+from ..utils._utils import cmd_run, handle_sequence_data
+from ._similarity_utils import read_tblastout
+>>>>>>> 489da92 (Fix import)
 
 class MMseqs2:
     """Class to interact with MMseqs."""
