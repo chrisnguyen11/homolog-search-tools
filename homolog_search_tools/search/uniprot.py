@@ -4,7 +4,7 @@ import sys
 from typing import List
 import requests
 import pandas as pd
-from .search_utils import Accession, AccessionId, UniProtRequestFields, UniProtRecord, batch_request
+from search_utils import Accession, AccessionId, UniProtRequestFields, UniProtRecord, batch_request
 
 class UniProtRequest:
     "Class to interact with the UniProt REST API."
@@ -74,11 +74,11 @@ def uniprotrecords_to_dataframe(records:List[UniProtRecord]) -> pd.DataFrame:
             # Names & Taxonomy
             "primaryAccession": record["primaryAccession"],
             "uniProtkbId": record["uniProtkbId"],
-            "genes": gene_sanitize(record),
+            "genes": _gene_sanitize(record),
             "organism_scientificName": record["organism"]["scientificName"],
             "organism_commonName": record.get("organism").get("commonName"),
             "taxonId": record["organism"]["taxonId"],
-            "proteinDescription": protein_description_sanitize(record),
+            "proteinDescription": _protein_description_sanitize(record),
             # Sequences
             "sequence": record["sequence"]["value"],
             "sequenceLength": record["sequence"]["length"],
@@ -90,33 +90,33 @@ def uniprotrecords_to_dataframe(records:List[UniProtRecord]) -> pd.DataFrame:
             "proteinExistence": record["proteinExistence"],
             "uniParcId": record["extraAttributes"]["uniParcId"],
             # Interaction
-            "Interaction": comment_sanitize(record, "INTERACTION"),
-            "Subunit": comment_sanitize(record, "SUBUNIT"),
+            "Interaction": _comment_sanitize(record, "INTERACTION"),
+            "Subunit": _comment_sanitize(record, "SUBUNIT"),
             # Gene Ontology (GO)
-            "GO": references_sanitize(record["uniProtKBCrossReferences"], "GO"),
+            "GO": _references_sanitize(record["uniProtKBCrossReferences"], "GO"),
             # Subcellular location
-            "SubcellularLocation": comment_sanitize(record, "SUBCELLULAR LOCATION"),
+            "SubcellularLocation": _comment_sanitize(record, "SUBCELLULAR LOCATION"),
             # Structure
-            "PDBAccession": references_sanitize(record["uniProtKBCrossReferences"], "PDB"),
+            "PDBAccession": _references_sanitize(record["uniProtKBCrossReferences"], "PDB"),
             # Family and domain.
-            "CDD": references_sanitize(record["uniProtKBCrossReferences"], "CDD"),
-            "DisProt": references_sanitize(record["uniProtKBCrossReferences"], "DisProt"),
-            "Gene3D": references_sanitize(record["uniProtKBCrossReferences"], "Gene3D"),
-            "HAPMAP": references_sanitize(record["uniProtKBCrossReferences"], "HAPMAP"),
-            "InterPro": references_sanitize(record["uniProtKBCrossReferences"], "InterPro"),
-            "NCBIfam": references_sanitize(record["uniProtKBCrossReferences"], "NCBIfam"),
-            "PANTHER": references_sanitize(record["uniProtKBCrossReferences"], "PANTHER"),
-            "Pfam": references_sanitize(record["uniProtKBCrossReferences"], "Pfam"),
-            "PRINTS": references_sanitize(record["uniProtKBCrossReferences"], "PRINTS"),
-            "PROSITE": references_sanitize(record["uniProtKBCrossReferences"], "PROSITE"),
-            "SFLD": references_sanitize(record["uniProtKBCrossReferences"], "SFLD"),
-            "SMART": references_sanitize(record["uniProtKBCrossReferences"], "SMART"),
-            "SUPFAM": references_sanitize(record["uniProtKBCrossReferences"], "SUPFAM"),
+            "CDD": _references_sanitize(record["uniProtKBCrossReferences"], "CDD"),
+            "DisProt": _references_sanitize(record["uniProtKBCrossReferences"], "DisProt"),
+            "Gene3D": _references_sanitize(record["uniProtKBCrossReferences"], "Gene3D"),
+            "HAPMAP": _references_sanitize(record["uniProtKBCrossReferences"], "HAPMAP"),
+            "InterPro": _references_sanitize(record["uniProtKBCrossReferences"], "InterPro"),
+            "NCBIfam": _references_sanitize(record["uniProtKBCrossReferences"], "NCBIfam"),
+            "PANTHER": _references_sanitize(record["uniProtKBCrossReferences"], "PANTHER"),
+            "Pfam": _references_sanitize(record["uniProtKBCrossReferences"], "Pfam"),
+            "PRINTS": _references_sanitize(record["uniProtKBCrossReferences"], "PRINTS"),
+            "PROSITE": _references_sanitize(record["uniProtKBCrossReferences"], "PROSITE"),
+            "SFLD": _references_sanitize(record["uniProtKBCrossReferences"], "SFLD"),
+            "SMART": _references_sanitize(record["uniProtKBCrossReferences"], "SMART"),
+            "SUPFAM": _references_sanitize(record["uniProtKBCrossReferences"], "SUPFAM"),
         }
         out.append(parsed_record)
     return pd.DataFrame(out)
 
-def gene_sanitize(record):
+def _gene_sanitize(record):
     "Sanitize genes."
     gene = []
     if record.get("genes"):
@@ -125,7 +125,7 @@ def gene_sanitize(record):
         ]
     return gene
 
-def references_sanitize(references, database):
+def _references_sanitize(references, database):
     "Sanitize references."
     out = []
     for reference in references:
@@ -133,14 +133,14 @@ def references_sanitize(references, database):
             out.append(reference["id"])
     return out
 
-def protein_description_sanitize(record):
+def _protein_description_sanitize(record):
     "Sanitize proteinDescription."
     protein_description = None
     if record["proteinDescription"].get("recommendedName"):
         protein_description = record["proteinDescription"]["recommendedName"]["fullName"]["value"]
     return protein_description
 
-def comment_sanitize(record, comment_type):
+def _comment_sanitize(record, comment_type):
     "Sanitize comments."
     out = []
     for comment in record["comments"]:
