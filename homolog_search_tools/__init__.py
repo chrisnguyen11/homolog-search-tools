@@ -10,6 +10,6 @@
 #     "utils"
 # ]
 
-from .search import UniProtRequest, uniprotrecords_to_dataframe
-from .similarity import MMseqs2
-from .utils import read_fasta, write_fasta
+from search import UniProtRequest, uniprotrecords_to_dataframe
+from similarity import MMseqs2
+from utils import read_fasta, write_fasta
