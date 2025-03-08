@@ -1,14 +1,14 @@
 """Importing submodules."""
 
-from . import search
-from . import similarity
-from . import utils
+# from . import search
+# from . import similarity
+# from . import utils
 
-__all__ = [
-    "search",
-    "similarity",
-    "utils"
-]
+# __all__ = [
+#     "search",
+#     "similarity",
+#     "utils"
+# ]
 
 # from .search.uniprot import UniProtRequest, uniprotrecords_to_dataframe
 # from .similarity.mmseqs2 import MMseqs2
