@@ -1,8 +1,8 @@
 """Importing submodules."""
 
-import search
-import similarity
-import utils
+from . import search
+from . import similarity
+from . import utils
 
 __all__ = [
     "search",
