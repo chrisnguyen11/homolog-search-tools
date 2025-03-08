@@ -1,12 +1,14 @@
-import requests
+"""Sub-module to interact with UniProt REST API."""
+
 import sys
 from typing import List
+import requests
 import pandas as pd
-from .search_utils import ACCESSION, UNIPROT_REQUEST_FIELDS, ACCESSION_ID, UniProtRecord, batch_request
+from .search_utils import Accession, AccessionId, UniProtRequestFields, UniProtRecord, batch_request
 
 class UniProtRequest:
     "Class to interact with the UniProt REST API."
-    fields = UNIPROT_REQUEST_FIELDS
+    fields = UniProtRequestFields
 
     def __init__(self, email:str) -> None:
         """
@@ -21,8 +23,8 @@ class UniProtRequest:
         - https://www.uniprot.org/help/programmatic_access
         """
         self.email = email
-    
-    def fetch_records(self, accession:ACCESSION, **kwarg) -> List[UniProtRecord]:
+
+    def fetch_records(self, accession:Accession, **kwarg) -> List[UniProtRecord]:
         """
         Batch fetch UniProt reccord a (or many) accession id(s).
 
@@ -46,17 +48,18 @@ class UniProtRequest:
                 }
             base_url = "https://rest.uniprot.org/uniprotkb/accessions"
 
-            response = requests.get(base_url, headers=headers, params=params)
+            response = requests.get(base_url, headers=headers, params=params, timeout=500)
             if not response.ok:
                 response.raise_for_status()
                 sys.exit()
             return response.json()['results']
-        
-        if isinstance(accession, ACCESSION_ID):
+
+        if isinstance(accession, AccessionId):
             accession = [accession]
-        records = batch_request(uniprot_request_function, accession=accession, **kwarg, fields=self.fields)
+        records = batch_request(
+            uniprot_request_function, accession=accession, **kwarg, fields=self.fields)
         return records
-    
+
     def set_request_fields(self, fields:List) -> None:
         "Overwrites default request fields. Used for testing."
         self.fields = fields
@@ -71,11 +74,11 @@ def uniprotrecords_to_dataframe(records:List[UniProtRecord]) -> pd.DataFrame:
             # Names & Taxonomy
             "primaryAccession": record["primaryAccession"],
             "uniProtkbId": record["uniProtkbId"],
-            "genes": [gene["geneName"]["value"] for gene in record["genes"] if gene.get("geneName")] if record.get("genes") else [],
+            "genes": gene_sanitize(record),
             "organism_scientificName": record["organism"]["scientificName"],
             "organism_commonName": record.get("organism").get("commonName"),
             "taxonId": record["organism"]["taxonId"],
-            "proteinDescription": record["proteinDescription"]["recommendedName"]["fullName"]["value"] if record["proteinDescription"].get("recommendedName") else None,
+            "proteinDescription": protein_description_sanitize(record),
             # Sequences
             "sequence": record["sequence"]["value"],
             "sequenceLength": record["sequence"]["length"],
@@ -87,28 +90,70 @@ def uniprotrecords_to_dataframe(records:List[UniProtRecord]) -> pd.DataFrame:
             "proteinExistence": record["proteinExistence"],
             "uniParcId": record["extraAttributes"]["uniParcId"],
             # Interaction
-            "Interaction": [interaction["interactantTwo"]["uniProtKBAccession"] for comment in record["comments"] if comment["commentType"] == "INTERACTION" for interaction in comment['interactions']],
-            "Subunit": [text["value"] for comment in record["comments"] if comment["commentType"] == "SUBUNIT" for text in comment['texts']],
+            "Interaction": comment_sanitize(record, "INTERACTION"),
+            "Subunit": comment_sanitize(record, "SUBUNIT"),
             # Gene Ontology (GO)
-            "GO": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "GO"],
+            "GO": references_sanitize(record["uniProtKBCrossReferences"], "GO"),
             # Subcellular location
-            "SubcellularLocation": [location["location"]["value"] for comment in record["comments"] if comment["commentType"] == "SUBCELLULAR LOCATION" for location in comment['subcellularLocations']],
+            "SubcellularLocation": comment_sanitize(record, "SUBCELLULAR LOCATION"),
             # Structure
-            "PDBAccession": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "PDB"],
-            # Family and domain
-            "CDD": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "CDD"],
-            "DisProt": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "DisProt"],
-            "Gene3D": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "Gene3D"],
-            "HAPMAP": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "HAPMAP"],
-            "InterPro": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "InterPro"],
-            "NCBIfam": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "NCBIfam"],
-            "PANTHER": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "PANTHER"],
-            "Pfam": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "Pfam"],
-            "PRINTS": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "PRINTS"],
-            "PROSITE": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "PROSITE"],
-            "SFLD": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "SFLD"],
-            "SMART": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "SMART"],
-            "SUPFAM": [reference["id"] for reference in record["uniProtKBCrossReferences"] if reference["database"] == "SUPFAM"],
+            "PDBAccession": references_sanitize(record["uniProtKBCrossReferences"], "PDB"),
+            # Family and domain.
+            "CDD": references_sanitize(record["uniProtKBCrossReferences"], "CDD"),
+            "DisProt": references_sanitize(record["uniProtKBCrossReferences"], "DisProt"),
+            "Gene3D": references_sanitize(record["uniProtKBCrossReferences"], "Gene3D"),
+            "HAPMAP": references_sanitize(record["uniProtKBCrossReferences"], "HAPMAP"),
+            "InterPro": references_sanitize(record["uniProtKBCrossReferences"], "InterPro"),
+            "NCBIfam": references_sanitize(record["uniProtKBCrossReferences"], "NCBIfam"),
+            "PANTHER": references_sanitize(record["uniProtKBCrossReferences"], "PANTHER"),
+            "Pfam": references_sanitize(record["uniProtKBCrossReferences"], "Pfam"),
+            "PRINTS": references_sanitize(record["uniProtKBCrossReferences"], "PRINTS"),
+            "PROSITE": references_sanitize(record["uniProtKBCrossReferences"], "PROSITE"),
+            "SFLD": references_sanitize(record["uniProtKBCrossReferences"], "SFLD"),
+            "SMART": references_sanitize(record["uniProtKBCrossReferences"], "SMART"),
+            "SUPFAM": references_sanitize(record["uniProtKBCrossReferences"], "SUPFAM"),
         }
         out.append(parsed_record)
     return pd.DataFrame(out)
+
+def gene_sanitize(record):
+    "Sanitize genes."
+    gene = []
+    if record.get("genes"):
+        gene = [
+            gene["geneName"]["value"] for gene in record["genes"] if gene.get("geneName")
+        ]
+    return gene
+
+def references_sanitize(references, database):
+    "Sanitize references."
+    out = []
+    for reference in references:
+        if reference["database"] == database:
+            out.append(reference["id"])
+    return out
+
+def protein_description_sanitize(record):
+    "Sanitize proteinDescription."
+    protein_description = None
+    if record["proteinDescription"].get("recommendedName"):
+        protein_description = record["proteinDescription"]["recommendedName"]["fullName"]["value"]
+    return protein_description
+
+def comment_sanitize(record, comment_type):
+    "Sanitize comments."
+    out = []
+    for comment in record["comments"]:
+        if comment_type  == "INTERACTION" and \
+            comment["commentType"] == "INTERACTION":
+            for interaction in comment['interactions']:
+                out.append(interaction["interactantTwo"]["uniProtKBAccession"])
+        elif comment_type  == "SUBUNIT" and \
+            comment["commentType"] == "SUBUNIT":
+            for text in comment['texts']:
+                out.append(text["value"])
+        elif comment_type  == "SUBCELLULAR LOCATION" and \
+            comment["commentType"] == "SUBCELLULAR LOCATION":
+            for location in comment['subcellularLocations']:
+                out.append(location["location"]["value"])
+    return out
