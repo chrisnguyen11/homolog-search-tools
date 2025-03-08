@@ -1,10 +1,30 @@
 import pandas as pd
-import numpy as np
+import subprocess
 import os
 from typing import List, Tuple, Union
 
 FASTA = Union[os.PathLike, str]
 SEQUNCE_DATA = Union[FASTA, pd.DataFrame]
+
+def cmd_run(cmd:List[str]):
+    """
+    Streamlines error handling of subprocess comands.
+
+    Parameters
+    ----------
+    - cmd: list of str: list of command arguments.
+
+    Returns
+    -------
+    - : stdout: output of cmd.
+    """
+    try:
+        output = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print("Status : FAIL", e.returncode, e.output)
+    except Exception as e:
+        print("Status : FAIL", e)
+    return output.stdout
 
 def handle_sequence_data(path_or_dataframe:SEQUNCE_DATA, temp_path:FASTA, 
                          **kwarg

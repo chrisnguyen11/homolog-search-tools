@@ -1,3 +1,3 @@
-from . import search
-from . import similarity
+import search
+import similarity
 __all__ = ['search', 'similarity']
