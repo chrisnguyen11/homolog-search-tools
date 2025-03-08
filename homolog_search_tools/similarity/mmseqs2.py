@@ -4,7 +4,7 @@ import tempfile
 import os
 import pandas as pd
 from utils.utils import cmd_run, handle_sequence_data
-from similarity_utils import read_tblastout
+from .similarity_utils import read_tblastout
 
 class MMseqs2:
     """Class to interact with MMseqs."""
