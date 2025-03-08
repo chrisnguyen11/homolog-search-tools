@@ -1,8 +1,8 @@
 import tempfile
 import os
 import pandas as pd
-from ..utils import handle_sequence_data
-from .similarity_utils import cmd_run, read_tblastout
+from ..utils import cmd_run, handle_sequence_data
+from .similarity_utils import read_tblastout
 
 class MMseqs2:
     def __init__(self, path_to_binary='mmseqs'):

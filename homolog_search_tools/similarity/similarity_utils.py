@@ -1,27 +1,5 @@
-import subprocess
 import pandas as pd
 import numpy as np
-from typing import List
-
-def cmd_run(cmd:List[str]):
-    """
-    Streamlines error handling of subprocess comands.
-
-    Parameters
-    ----------
-    - cmd: list of str: list of command arguments.
-
-    Returns
-    -------
-    - : stdout: output of cmd.
-    """
-    try:
-        output = subprocess.run(cmd, capture_output=True, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print("Status : FAIL", e.returncode, e.output)
-    except Exception as e:
-        print("Status : FAIL", e)
-    return output.stdout
 
 def compute_log_evalue(evalues):
     """
