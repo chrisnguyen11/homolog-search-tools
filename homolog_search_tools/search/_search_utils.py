@@ -1,11 +1,13 @@
-from typing import Callable, List, Union
+"""Helper functions for the search sub-module."""
 
-ACCESSION_ID = str
-ACCESSION_IDS = List[ACCESSION_ID]
-ACCESSION = Union[ACCESSION_ID, ACCESSION_IDS]
-UniProtRecord = dict
+from typing import Callable, Dict, List, Union
 
-UNIPROT_REQUEST_FIELDS = [
+AccessionId = str
+AccessionIds = List[AccessionId]
+Accession = Union[AccessionIds, AccessionIds]
+UniProtRecord = Dict
+
+UniProtRequestFields = [
     # Names & Taxonomy
     'accession', 'id', 'gene_names', 'gene_primary', 'gene_synonym',
     'organism_name', 'organism_id', 'protein_name',
