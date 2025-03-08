@@ -4,6 +4,7 @@ import tempfile
 import os
 import pandas as pd
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:homolog_search_tools/similarity/_mmseqs2.py
 <<<<<<< HEAD:homolog_search_tools/similarity/_mmseqs2.py
 from ..utils._utils import cmd_run, handle_sequence_data
@@ -19,6 +20,10 @@ from .similarity_utils import read_tblastout
 from ..utils._utils import cmd_run, handle_sequence_data
 from ._similarity_utils import read_tblastout
 >>>>>>> 489da92 (Fix import)
+=======
+from ..utils._utils import cmd_run, handle_sequence_data
+from ._similarity_utils import read_tblastout
+>>>>>>> 8e7514b6915c0b1501799d517b9e669392c3594f
 
 class MMseqs2:
     """Class to interact with MMseqs."""
