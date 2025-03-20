@@ -73,7 +73,7 @@ def read_transform_tblastout(path_or_buff, sep:str="\t") -> pd.DataFrame:
     final_columns = [
         "Accession_1", "Accession_2", "Percent_Identity", "Alignment_Length",
         "Mismatches", "Gap_Openings", "Query_Start", "Query_End", "Target_Start", "Target_End",
-        "E_Value", "Bit_Score"
+        "E_Value", "Bit_Score", "Log_E_Value"
     ]
     df = _read_tblastout(path_or_buff, sep)
     df["Log_E_Value"] = _compute_log_evalue(df["E_Value"])
