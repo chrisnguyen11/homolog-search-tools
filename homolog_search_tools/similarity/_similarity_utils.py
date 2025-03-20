@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import warnings 
 
 def _compute_log_evalue(evalues):
     """
@@ -16,6 +17,9 @@ def _compute_log_evalue(evalues):
     -------
     - : np.array: float: log10 E-values
     """
+    
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
+
     log_evalue = - np.log10(evalues)
     max_log_evalue = log_evalue[~np.isinf(log_evalue)].max()
     return np.where(np.isinf(log_evalue), max_log_evalue, log_evalue)
