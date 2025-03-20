@@ -4,7 +4,7 @@ import tempfile
 import os
 import pandas as pd
 from ..utils._utils import SequenceData, cmd_run, handle_sequence_data
-from ._similarity_utils import read_tblastout
+from ._similarity_utils import read_transform_tblastout
 
 class BlastP:
     """Class to interact with blast-p."""
@@ -41,7 +41,7 @@ class BlastP:
             # Run MMseqs2 commads.
             cmd_run([self.path_to_binary, "-query", query_db, "-subject", target_db, "-outfmt", "6", "-out", output_file])
 
-            df = read_tblastout(output_file)
+            df = read_transform_tblastout(output_file)
         return df
 
     def run_allvsall(self, sequences:SequenceData) -> pd.DataFrame:
