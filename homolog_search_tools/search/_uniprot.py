@@ -52,7 +52,7 @@ class UniProtRequest:
             if not response.ok:
                 response.raise_for_status()
                 sys.exit()
-            return response.json()['results']
+            return response.json()["results"]
 
         if isinstance(accession, AccessionId):
             accession = [accession]
@@ -146,14 +146,14 @@ def _comment_sanitize(record, comment_type):
     for comment in record["comments"]:
         if comment_type  == "INTERACTION" and \
             comment["commentType"] == "INTERACTION":
-            for interaction in comment['interactions']:
+            for interaction in comment["interactions"]:
                 out.append(interaction["interactantTwo"]["uniProtKBAccession"])
         elif comment_type  == "SUBUNIT" and \
             comment["commentType"] == "SUBUNIT":
-            for text in comment['texts']:
+            for text in comment["texts"]:
                 out.append(text["value"])
         elif comment_type  == "SUBCELLULAR LOCATION" and \
             comment["commentType"] == "SUBCELLULAR LOCATION":
-            for location in comment['subcellularLocations']:
+            for location in comment["subcellularLocations"]:
                 out.append(location["location"]["value"])
     return out

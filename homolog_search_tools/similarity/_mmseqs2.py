@@ -9,7 +9,7 @@ from ._similarity_utils import read_transform_tblastout
 class MMseqs2:
     """Class to interact with MMseqs."""
 
-    def __init__(self, path_to_binary='mmseqs'):
+    def __init__(self, path_to_binary="mmseqs"):
         self.path_to_binary = path_to_binary
 
     def run(self, query_sequences:SequenceData, target_sequences:SequenceData) -> pd.DataFrame:
@@ -32,13 +32,13 @@ class MMseqs2:
         """
         # Declare temp files.
         with tempfile.TemporaryDirectory() as temp_dir:
-            prefilter_db = os.path.join(temp_dir.name, "prefilter_db")
-            alignment_db = os.path.join(temp_dir.name, "alignment_db")
-            output_file = os.path.join(temp_dir.name, "output_file")
+            prefilter_db = os.path.join(temp_dir, "prefilter_db")
+            alignment_db = os.path.join(temp_dir, "alignment_db")
+            output_file = os.path.join(temp_dir, "output_file")
             query_db = handle_sequence_data(query_sequences,
-                                            os.path.join(temp_dir.name, "query_db"))
+                                            os.path.join(temp_dir, "query_db"))
             target_db = handle_sequence_data(target_sequences,
-                                            os.path.join(temp_dir.name, "target_db"))
+                                            os.path.join(temp_dir, "target_db"))
 
             # Run MMseqs2 commads.
             cmd_run([self.path_to_binary, "prefilter", query_db, target_db, prefilter_db])

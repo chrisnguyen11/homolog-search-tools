@@ -32,11 +32,11 @@ class BlastP:
         """
         # Declare temp files.
         with tempfile.TemporaryDirectory() as temp_dir:
-            output_file = os.path.join(temp_dir.name, "output_file")
+            output_file = os.path.join(temp_dir, "output_file")
             query_db = handle_sequence_data(query_sequences,
-                                            os.path.join(temp_dir.name, "query_db"))
+                                            os.path.join(temp_dir, "query_db"))
             target_db = handle_sequence_data(target_sequences,
-                                            os.path.join(temp_dir.name, "target_db"))
+                                            os.path.join(temp_dir, "target_db"))
 
             # Run MMseqs2 commads.
             cmd_run([self.path_to_binary, "-query", query_db, "-subject", target_db, "-outfmt", "6", "-out", output_file])
