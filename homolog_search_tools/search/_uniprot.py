@@ -143,17 +143,20 @@ def _protein_description_sanitize(record):
 def _comment_sanitize(record, comment_type):
     "Sanitize comments."
     out = []
-    for comment in record["comments"]:
-        if comment_type  == "INTERACTION" and \
-            comment["commentType"] == "INTERACTION":
-            for interaction in comment["interactions"]:
-                out.append(interaction["interactantTwo"]["uniProtKBAccession"])
-        elif comment_type  == "SUBUNIT" and \
-            comment["commentType"] == "SUBUNIT":
-            for text in comment["texts"]:
-                out.append(text["value"])
-        elif comment_type  == "SUBCELLULAR LOCATION" and \
-            comment["commentType"] == "SUBCELLULAR LOCATION":
-            for location in comment["subcellularLocations"]:
-                out.append(location["location"]["value"])
+    try:
+        for comment in record["comments"]:
+            if comment_type  == "INTERACTION" and \
+                comment["commentType"] == "INTERACTION":
+                for interaction in comment["interactions"]:
+                    out.append(interaction["interactantTwo"]["uniProtKBAccession"])
+            elif comment_type  == "SUBUNIT" and \
+                comment["commentType"] == "SUBUNIT":
+                for text in comment["texts"]:
+                    out.append(text["value"])
+            elif comment_type  == "SUBCELLULAR LOCATION" and \
+                comment["commentType"] == "SUBCELLULAR LOCATION":
+                for location in comment["subcellularLocations"]:
+                    out.append(location["location"]["value"])
+    except:
+        out = None
     return out
