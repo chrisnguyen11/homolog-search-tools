@@ -43,7 +43,7 @@ def handle_sequence_data(path_or_dataframe:SequenceData, temp_path:Fasta,
         )
 
 def write_fasta(df:pd.DataFrame, path_or_buf:Fasta,
-                header_col:str='Accession', sequence_col:str='Sequence'
+                header_col:str='Header', sequence_col:str='Sequence'
                 ) -> None:
     """
     Writes fasta file from DataFrame.
