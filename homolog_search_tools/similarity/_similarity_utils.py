@@ -4,18 +4,20 @@ import pandas as pd
 import numpy as np
 import warnings 
 
-def _compute_log_evalue(evalues):
+from typing import Tuple
+
+def _compute_log_evalue(evalues:np.ndarray) -> np.ndarray:
     """
     From E-values, apply log10 transformation. 
     For E-values with value 0, replace with min (not zero) E-value.
 
     Parameters
     ----------
-    - : np.array: float: E-values
+    : np.array: float: E-values
 
     Returns
     -------
-    - : np.array: float: log10 E-values
+    : np.array: float: log10 E-values
     """
     
     warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -24,7 +26,7 @@ def _compute_log_evalue(evalues):
     max_log_evalue = log_evalue[~np.isinf(log_evalue)].max()
     return np.where(np.isinf(log_evalue), max_log_evalue, log_evalue)
 
-def _alphabetized_accessions(accessions):
+def _alphabetized_accessions(accessions:Tuple[str,str]) -> Tuple[str,str]:
     """
     For a tuple (pair) of query and target accesssions, return alphabetized tuple.
     Assumes (query_accession, target_accession) == (target_accession, query_accession),
