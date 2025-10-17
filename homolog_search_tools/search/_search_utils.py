@@ -32,7 +32,7 @@ UniProtRequestFields = [
     "xref_prosite", "xref_sfld", "xref_smart", "xref_supfam"
 ]
 
-def batch_request(request_func:Callable, accessions:Accession, batch_size:int=500, **kwarg):
+def batch_request(request_func:Callable, accession:Accession, batch_size:int=500, **kwarg):
     """
     Exectues request_func in batches. Can handle potential
     unknown accession (404) errors.
@@ -48,16 +48,16 @@ def batch_request(request_func:Callable, accessions:Accession, batch_size:int=50
     : : concatenated output of the request function.
     """
     output = []
-    if len(accessions) == 1:
+    if len(accession) == 1:
         try:
-            output.extend(request_func(accessions))
+            output.extend(request_func(accession, **kwarg))
         except:
-            print(f"Unable to handle {accessions}")
+            print(f"Unable to handle {accession}")
     else:
-        for i in range(0, len(accessions), batch_size):
-            batch = accessions[i: i+batch_size]
+        for i in range(0, len(accession), batch_size):
+            batch = accession[i: i+batch_size]
             try:
-                output.extend(request_func(batch))
+                output.extend(request_func(batch, **kwarg))
             except:
-                output.extend(batch_request(request_func, batch, batch_size//2))
+                output.extend(batch_request(request_func, batch, batch_size//2, **kwarg))
     return output
