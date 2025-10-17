@@ -12,7 +12,7 @@ UniProtRequestFields = [
     "accession", "id", "gene_names", "gene_primary", "gene_synonym",
     "organism_name", "organism_id", "protein_name",
     # Sequences
-    "organelle", "length", "mass", "sequence", "sequence_version",
+    "length", "mass", "sequence", "sequence_version",
     # Function
     "ft_act_site", "ft_binding", "cc_catalytic_activity", "cc_cofactor",
     "ec", "rhea", "temp_dependence",
