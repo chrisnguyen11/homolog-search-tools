@@ -1,9 +1,9 @@
 """Helper functions for the similarity sub-module."""
 
+from typing import Dict, Tuple
+
 import pandas as pd
 import numpy as np
-
-from typing import Tuple
 
 def _compute_log_evalue(evalues:np.ndarray, epsilon:float=1E-300) -> np.ndarray:
     """
@@ -26,9 +26,9 @@ def _compute_log_evalue(evalues:np.ndarray, epsilon:float=1E-300) -> np.ndarray:
     safe_evalues = np.where(positive_evalues == 0.0, smallest_nonzero, positive_evalues)
     return -np.log10(safe_evalues)
 
-def _alphabetized_accessions(accessions:Tuple[str,str]) -> Tuple[str,str]:
+def _alphabetized_accessions(accessions:Dict[str,str]) -> Tuple[str,str]:
     """
-    For a tuple (pair) of query and target accesssions, return alphabetized tuple.
+    For a pair of query and target accesssions, return alphabetized tuple.
     Assumes (query_accession, target_accession) == (target_accession, query_accession),
         order does not matter.
     """
@@ -63,7 +63,7 @@ def _read_tblastout(path_or_buff, sep:str="\t") -> pd.DataFrame:
         "Alignment_Length", "Mismatches", "Gap_Openings", "Query_Start", "Query_End", 
         "Target_Start", "Target_End"
     ]
-    df =  pd.read_csv(path_or_buff, sep=sep, names=tblast_columns)
+    df = pd.read_csv(path_or_buff, sep=sep, names=tblast_columns)
     df[tblast_columns_float] = df[tblast_columns_float].astype(float)
     df[tblast_columns_int] = df[tblast_columns_int].astype(int)
     return df
