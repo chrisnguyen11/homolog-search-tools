@@ -2,29 +2,29 @@
 
 import pandas as pd
 import numpy as np
-import warnings 
 
 from typing import Tuple
 
-def _compute_log_evalue(evalues:np.ndarray) -> np.ndarray:
+def _compute_log_evalue(evalues:np.ndarray, epsilon:float=1E-300) -> np.ndarray:
     """
-    From E-values, apply log10 transformation. 
-    For E-values with value 0, replace with min (not zero) E-value.
+    Apply -log10 transformation to E-values.
+    E-values with value 0, replace with smallest non-zero E-value, 
+    negative E-values replace with np.nan.
 
     Parameters
     ----------
-    : np.array: float: E-values
+    E-values : np.array: float: E-values.
+    epsilon : float: safety lower bound for valid E-values when all 
+        E-values are zero or negative.
 
     Returns
     -------
-    : np.array: float: log10 E-values
+    : np.array: float: -log10 E-values
     """
-    
-    warnings.filterwarnings("ignore", category=RuntimeWarning)
-
-    log_evalue = - np.log10(evalues)
-    max_log_evalue = log_evalue[~np.isinf(log_evalue)].max()
-    return np.where(np.isinf(log_evalue), max_log_evalue, log_evalue)
+    smallest_nonzero = np.min(evalues[evalues > 0.0]) if np.any(evalues > 0.0) else epsilon
+    positive_evalues = np.where(evalues < 0.0, np.nan, evalues)
+    safe_evalues = np.where(positive_evalues == 0.0, smallest_nonzero, positive_evalues)
+    return -np.log10(safe_evalues)
 
 def _alphabetized_accessions(accessions:Tuple[str,str]) -> Tuple[str,str]:
     """
