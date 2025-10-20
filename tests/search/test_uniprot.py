@@ -1,4 +1,5 @@
 import pandas as pd
+from unittest.mock import Mock, patch
 
 from homolog_search_tools.search._uniprot import UniProtRequest, uniprotrecords_to_dataframe
 from homolog_search_tools.search._search_utils import UniProtRequestFields
@@ -9,8 +10,9 @@ def test_UniProtRequest_init():
     assert uniprot.email == 'example@email.com'
     assert uniprot.fields == UniProtRequestFields
 
-def test_UniProtRequest_fetch_records():
-    example_records = [
+@patch("requests.get")
+def test_UniProtRequest_fetch_records(mocker):
+    fake_records = [
         {
             'entryType': 'UniProtKB reviewed (Swiss-Prot)', 'primaryAccession': 'P01308', 
             'uniProtkbId': 'INS_HUMAN', 
@@ -20,9 +22,21 @@ def test_UniProtRequest_fetch_records():
             'uniProtkbId': 'A4_HUMAN', 
             'extraAttributes': {'uniParcId': 'UPI000002DB1C'}}
     ]
+    mock_response = Mock()
+    mock_response.json.return_value = {"results": fake_records}
+    mocker.return_value = mock_response
+
     uniprot = UniProtRequest('example@email.com')
     uniprot.set_request_fields(['id'])
-    assert uniprot.fetch_records(['P01308','P05067']) == example_records
+    records = uniprot.fetch_records(['P01308','P05067'])
+
+    mocker.assert_called_with(
+        'https://rest.uniprot.org/uniprotkb/accessions',
+        headers={'accept': 'application/json'}, 
+        params={'accessions': 'P01308,P05067', 'fields': ['id']}, 
+        timeout=500
+    )
+    assert records == fake_records
 
 def test_uniprotrecords_to_dataframe():
     example_record = [{
