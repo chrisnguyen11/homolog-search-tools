@@ -2,10 +2,11 @@
 
 import subprocess
 import os
+from io import StringIO
 from typing import List, Tuple, Union
 import pandas as pd
 
-Fasta = Union[os.PathLike, str]
+Fasta = Union[os.PathLike, str, StringIO]
 SequenceData = Union[Fasta, pd.DataFrame]
 
 def cmd_run(cmd:List[str]):
@@ -22,9 +23,10 @@ def cmd_run(cmd:List[str]):
     """
     try:
         output = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        return output.stdout
     except subprocess.CalledProcessError as e:
         print("Status : FAIL", e.returncode, e.output)
-    return output.stdout
+        return e.output
 
 def handle_sequence_data(path_or_dataframe:SequenceData, temp_path:Fasta,
                          **kwarg
