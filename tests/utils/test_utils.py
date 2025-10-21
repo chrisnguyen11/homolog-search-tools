@@ -104,3 +104,4 @@ def test_write_fasta(mock_file):
     # assert contents of write(...) calls
     calls = mock_file().write.mock_calls
     assert calls == fake_calls
+    

@@ -30,12 +30,15 @@ def test_UniProtRequest_fetch_records(mocker):
     uniprot.set_request_fields(['id'])
     records = uniprot.fetch_records(['P01308','P05067'])
 
-    mocker.assert_called_with(
+    # assert request.get(...) is called once with correct parameters
+    mocker.assert_called_once_with(
         'https://rest.uniprot.org/uniprotkb/accessions',
         headers={'accept': 'application/json'}, 
         params={'accessions': 'P01308,P05067', 'fields': ['id']}, 
         timeout=500
     )
+    
+    # assert results
     assert records == fake_records
 
 def test_uniprotrecords_to_dataframe():
