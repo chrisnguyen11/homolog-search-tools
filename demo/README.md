@@ -8,7 +8,7 @@ This notebook demonstrates homolog-search-tools functionality using ADH1, alcoho
 
 ## Files
 
-1. homolog_search_tools_Demo.ipynb: contains code for the analysis.
+1. homolog_search_tools_Demo.ipynb: contains code for the analysis, however widgets do not render correctly in GitHub, refer to [colab version](https://colab.research.google.com/drive/1ItzZ4pDOc8ntbHgHxCGEqRHULULxlyr7?usp=sharing) for SSN renderings
 2. ADH1_UniProtKN-20260306: contains ADH1 accession ids from Swiss-Prot.
 
 
