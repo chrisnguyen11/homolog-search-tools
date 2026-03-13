@@ -43,6 +43,8 @@ class MMseqs2:
                                             os.path.join(temp_dir, "target_db"))
 
             # Run MMseqs2 commads.
+            cmd_run([self.path_to_binary, "createdb", query_sequences, query_db])
+            cmd_run([self.path_to_binary, "createdb", target_sequences, target_db])
             cmd_run([self.path_to_binary, "prefilter", query_db, target_db, prefilter_db])
             cmd_run([self.path_to_binary, "align", query_db, target_db, prefilter_db, alignment_db])
             cmd_run([self.path_to_binary, "convertalis",
@@ -87,6 +89,51 @@ class MMseqs2:
 
             mmapper = parse_mmseqs_cluster_adjacency_list(adjacency_list)
         return mmapper
+    
+    # def run_easy_cluster(self, query_sequences:SequenceData, target_sequences:SequenceData, algorithm:str="easy-cluster") -> ClusterDict:
+    #     """
+    #     Generic command wrapper for MMseqs2 to cluster databases.
+        
+    #     Parameters
+    #     ----------
+    #     - sequences: SEQUENCE_DATA
+
+    #     Returns
+    #     -------
+    #     - :ClusterDict: maps nodes to representative node
+
+    #     Reference
+    #     ---------
+    #     - https://mmseqs.com/latest/userguide.pdf
+    #     """
+    #     if algorithm not in ["easy-cluster", "easy-linclust"]:
+    #         raise ValueError("Invalid algorithm value.")
+
+    #     # Declare temp files.
+    #     with tempfile.TemporaryDirectory() as temp_dir:
+    #         output_prefix = os.path.join(temp_dir, "output")
+    #         adjacency_list = f"{output_prefix}_cluster.tsv"
+    #         inner_temp_dir = os.path.join(temp_dir, "tmp")
+
+    #         # Run MMseqs2 commads.
+    #         cmd_run([self.path_to_binary, algorithm, sequences, output_prefix, inner_temp_dir])
+
+    #         mmapper = parse_mmseqs_cluster_adjacency_list(adjacency_list)
+
+    #         prefilter_db = os.path.join(temp_dir, "prefilter_db")
+    #         alignment_db = os.path.join(temp_dir, "alignment_db")
+    #         output_file = os.path.join(temp_dir, "output_file")
+    #         query_db = handle_sequence_data(query_sequences,
+    #                                         os.path.join(temp_dir, "query_db"))
+    #         target_db = handle_sequence_data(target_sequences,
+    #                                         os.path.join(temp_dir, "target_db"))
+
+    #         # Run MMseqs2 commads.
+    #         cmd_run([self.path_to_binary, "prefilter", query_db, target_db, prefilter_db])
+    #         cmd_run([self.path_to_binary, "align", query_db, target_db, prefilter_db, alignment_db])
+    #         cmd_run([self.path_to_binary, "convertalis",
+    #                 query_db, target_db, alignment_db, output_file])
+    #     return mmapper
 
 def parse_mmseqs_cluster_adjacency_list(adjacency_list:os.PathLike | str) -> ClusterDict:
     """
