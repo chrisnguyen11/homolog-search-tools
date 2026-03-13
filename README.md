@@ -39,7 +39,7 @@ blastp_output = blastp.run_allvsall(sequence_df)
 ```
 
 ## Install Third-Party Tools 
-Refer to this [Dockerfile](https://github.com/chrisnguyen11/homolog-search-tools/tree/main/Dockerfile) for setting up a Jupyter environment with ncbi-blast+, diamond, mmseqs2, and clustalo.
+Refer to this [Dockerfile](https://github.com/chrisnguyen11/homolog-search-tools/blob/main/Dockerfile) for setting up a Jupyter environment with ncbi-blast+, diamond, mmseqs2, and clustalo.
 
 ## Example
 - Refer to the [demo](https://github.com/chrisnguyen11/homolog-search-tools/tree/main/demo) to explore a set of ADH1 protein sequences using several homolog-search-tools functions.
